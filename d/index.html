@@ -82,6 +82,16 @@
                 button.innerHTML = literals.en.connect.replace('$$0$$', ipPort.value);
             }
 
+            function onPlayerNameChange(){
+                if (playerNameInput.value) {
+                    button.disabled = false;
+                } else {
+                    button.disabled = true;
+                }
+            }
+
+            onPlayerNameChange();
+
             function joinServer(){
                 playerName = playerNameInput.value;
                 window.open(buildConnect());
@@ -89,6 +99,7 @@
             }
 
             ipPort.addEventListener('input', onIpPortChange);
+            playerNameInput.addEventListener('input', onPlayerNameChange);
 
             if (address) {
                 address = address.replace('#/', '');
