@@ -5,55 +5,69 @@
         <title>DayZ Direct Connect</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
         <style>
-            html, body {
-                width: 100%;
-                height: 100%;
-            }
-
-            body {
-                display: flex;
-                flex-direction: column;
-            }
-
-            section.section {
-                display: flex;
-                flex-grow: 1;
-            }
+            html, body { width: 100%;  height: 100%; }
+            body { display: flex; flex-direction: column; }
+            section.section { flex-grow: 1; }
+            header, footer { padding-bottom: 3rem !important }
+            .how-to { background: #f7f7f7; border-radius: 10px; padding: 1.5rem; font-size: 14px; }
+            .how-to ol { padding: 0 0.75rem; }
         </style>
     </head>
     <body>
         <section class="section">
-            <div class="container">
-                <div class="column is-half is-offset-one-quarter">
-                    <h1 class="title is-1">DayZ Direct Connect</h1>
+            <header class="container">
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1">DayZ Direct Connect</h1>
+                    </div>
                 </div>
-                <div class="column is-half is-offset-one-quarter">
-                    <form>
-                        <div class="field">
-                            <label class="label" for="ipPort">Enter a IP and port:</label>
-                            <div class="control">
-                                <input class="input" type="text" id="ipPort" />
+            </header>
+            <div class="container">
+                <div class="columns">
+                    <div class="column is-6 is-offset-1">
+                        <form>
+                            <div class="field">
+                                <label class="label" for="ipPort">Enter a IP and port:</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="ipPort" />
+                                </div>
                             </div>
-                        </div>
-                        <div class="field">
-                            <label class="label" for="playerName">Enter your name:</label>
-                            <div class="control">
-                                <input class="input" type="text" id="playerName" />
+                            <div class="field">
+                                <label class="label" for="playerName">Enter your name:</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="playerName" />
+                                </div>
                             </div>
+                            <diiv class="field">
+                                <button class="button is-primary" id="connect">Connect</button>
+                            </diiv>
+                        </form>
+                        <p><i>Make sure you have closed all DayZ related programmes (Steam, DZSA Launcher, DayZ, DayZ Tools)</i></p>
+                    </div>
+                    <div class="column is-4">
+                        <div class="how-to">
+                            <h2 class="title is-5">How to use DayZ Direct Connect</h2>
+                            <ol>
+                                <li>Close all Steam games. Make sure Steam does not show you as in-game.</li>
+                                <li>Make sure you have a IP and port to connect to.</li>
+                                <li>Make sure you have entered a player name.</li>
+                                <li>Press the connect button.</li>
+                                <li>When prompted with "Open Steam?" confirm by clicking "Open Steam".</li>
+                                <li>Go to Steam and click "Ok".</li>
+                                <li>Wait for DayZ to open, after aout 5-10 seconds you will get a pop up confirming the mods and connection details.</li>
+                            </ol>
                         </div>
-                        <diiv class="field">
-                            <button class="button is-primary" id="connect">Connect</button>
-                        </diiv>
-                    </form>
-                    <p><i>Make sure you have closed all DayZ related programmes (Steam, DZSA Launcher, DayZ, DayZ Tools)</i></p>
+                    </div>
                 </div>
             </div>
         </section>
         <footer class="footer">
             <div class="container">
-                <div class="column is-half is-offset-one-quarter"">
-                    Idea/concept by <a href="https://www.middleagedgamers.co.uk">[MAG]inkihh</a><br>
-                    Made by <a href="https://www.hhdayz.uk">Lewk</a>
+                    <div class="columns">
+                    <div class="column is-offset-1">
+                        Idea/concept by <a href="https://www.middleagedgamers.co.uk">[MAG]inkihh</a><br>
+                        Made by <a href="https://www.hhdayz.uk">Lewk</a>
+                    </div>
                 </div>
             </div>
         </footer>
