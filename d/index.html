@@ -25,23 +25,23 @@
             <div class="container">
                 <div class="columns">
                     <div class="column is-6 is-offset-1">
-                        <form>
-                            <div class="field">
-                                <label class="label" for="ipPort">Enter a IP and port:</label>
-                                <div class="control">
-                                    <input class="input" type="text" id="ipPort" />
-                                </div>
+                        <div class="field">
+                            <label class="label" for="ipPort">Enter a IP and port:</label>
+                            <div class="control">
+                                <input class="input" type="text" id="ipPort" />
                             </div>
-                            <div class="field">
-                                <label class="label" for="playerName">Enter your name:</label>
-                                <div class="control">
-                                    <input class="input" type="text" id="playerName" />
-                                </div>
+                            <p class="help"><a href="#" id="loadIpPort">Load IP and port from local storage.</a></p>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="playerName">Enter your name:</label>
+                            <div class="control">
+                                <input class="input" type="text" id="playerName" />
                             </div>
-                            <diiv class="field">
-                                <button class="button is-primary" id="connect">Connect</button>
-                            </diiv>
-                        </form>
+                            <p class="help"><a href="#" id="loadPlayerName">Load player name from local storage.</a></p>
+                        </div>
+                        <div class="field">
+                            <button class="button is-primary" id="connect">Connect</button>
+                        </div>
                         <p><i>Make sure you have closed all DayZ related programmes (Steam, DZSA Launcher, DayZ, DayZ Tools)</i></p>
                     </div>
                     <div class="column is-4">
@@ -73,73 +73,83 @@
         </footer>
 
         <script type="text/javascript">
-            var playerNameInput = document.getElementById('ipPort');
-            var playerNameInput = document.getElementById('playerName');
-            var button = document.getElementById('connect');
-            let address = window.location.hash;
-            let playerName = '';
-
             var literals = {
                 en: {
-                    promptFirst: "Please enter your in game name:",
-                    promptSecondary: "Please confirm your in game name:",
-                    connect: "Connect to $$0$$",
-                    noAddress: "No ip or port provided"
+                    button: {
+                        connect: 'Connect to $$0$$',
+                        noAddress: 'No ip or port provided'
+                    }
                 }
             };
 
-            let message = literals.en.promptFirst;
+            let store_ipPort;
+            let store_playerName;
+            let element_ipPort = document.getElementById('ipPort');
+            let element_ipPortLocalStorage = document.getElementById('loadIpPort');
+            let element_playerName = document.getElementById('playerName');
+            let element_playerNameLocalStorage = document.getElementById('loadPlayerName');
+            let element_button = document.getElementById('connect');
 
-            var storedPlayerName = localStorage.getItem('ign');
-
-            if (storedPlayerName) {
-                playerName = storedPlayerName;
-                message = literals.en.promptSecondary;
+            function loadIpPortFromLocalStorage(e) {
+                if (e) e.preventDefault();
+                store_ipPort = localStorage.getItem('server');
+                element_ipPort.value = store_ipPort;
             }
 
-            playerNameInput.value = playerName;
+            function loadPlayerNameFromLocalStorage(e) {
+                if (e) e.preventDefault();
+                store_playerName = localStorage.getItem('name');
+                element_playerName.value = store_playerName;
+            }
 
-            function buildConnect(){
-                if (address) {
-                    playerName = playerNameInput.value;
-                    var connect = 'steam://run/221100//+connect%20' + ipPort.value + '%20-name=\"' + playerName + '\"';
-                    return connect;
+            function findIpPortInHash() {
+                if (window.location.hash) {
+                    store_ipPort = window.location.hash.replace('#/', '');
+                    element_ipPort.value = store_ipPort;
                 }
-                return null;
             }
 
-            function onIpPortChange(){
-                button.innerHTML = literals.en.connect.replace('$$0$$', ipPort.value);
-            }
-
-            function onPlayerNameChange(){
-                if (playerNameInput.value) {
-                    button.disabled = false;
+            function shouldDisableButton() {
+                if (
+                    store_ipPort &&
+                    store_ipPort !== '' &&
+                    store_playerName &&
+                    store_playerName !== ''
+                ) {
+                    element_button.disabled = false;
                 } else {
-                    button.disabled = true;
+                    element_button.disabled = true;
                 }
             }
 
-            onPlayerNameChange();
-
-            function joinServer(){
-                playerName = playerNameInput.value;
-                window.open(buildConnect());
-                localStorage.setItem('ign', playerName);
+            function onIpPortChange() {
+                store_ipPort = element_ipPort.value;
+                shouldDisableButton();
             }
 
-            ipPort.addEventListener('input', onIpPortChange);
-            playerNameInput.addEventListener('input', onPlayerNameChange);
-
-            if (address) {
-                address = address.replace('#/', '');
-                ipPort.value = address;
-                button.innerHTML = literals.en.connect.replace('$$0$$', address);
-                button.addEventListener('click', joinServer);
-            } else {
-                button.disabled = true;
-                button.innerHTML = literals.en.noAddress;
+            function onPlayerNameChange() {
+                store_playerName = element_playerName.value;
+                shouldDisableButton();
             }
+
+            function buttonClick() {
+                localStorage.setItem('name', store_playerName);
+                localStorage.setItem('server', store_ipPort);
+                var connect = 'steam://run/221100//+connect%20' + store_ipPort + '%20-name=\"' + store_playerName + '\"';
+                window.open(connect);
+            }
+
+            element_ipPort.addEventListener('input', onIpPortChange);
+            element_playerName.addEventListener('input', onPlayerNameChange);
+            element_button.addEventListener('click', buttonClick);
+            element_ipPortLocalStorage.addEventListener('click', loadIpPortFromLocalStorage);
+            element_playerNameLocalStorage.addEventListener('click', loadPlayerNameFromLocalStorage);
+
+            loadIpPortFromLocalStorage();
+            loadPlayerNameFromLocalStorage();
+            findIpPortInHash();           
+
+            shouldDisableButton();
         </script>
     </body>
 </html>
