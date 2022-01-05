@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>DayZ Direct Connect</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    </head>
+    <body>
+        <section class="section">
+            <div class="container">
+                <div class="column is-half is-offset-one-quarter">
+                    <h1 class="title is-1">DayZ Direct Connect</h1>
+                </div>
+                <div class="column is-half is-offset-one-quarter">
+                    <form>
+                        <div class="field">
+                            <label class="label" for="ipPort">Enter a IP and port:</label>
+                            <div class="control">
+                                <input class="input" type="text" id="ipPort" />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="playerName">Enter your name:</label>
+                            <div class="control">
+                                <input class="input" type="text" id="playerName" />
+                            </div>
+                        </div>
+                        <diiv class="field">
+                            <button class="button is-primary" id="connect">Connect</button>
+                        </diiv>
+                    </form>
+                    <p><i>Make sure you have closed all DayZ related programmes (Steam, DZSA Launcher, DayZ, DayZ Tools)</i></p>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="container">
+                <div class="column is-half is-offset-one-quarter"">
+                    Idea by <a href="https://www.middleagedgamers.co.uk">[MAG]inkihh</a><br>
+                    Made by <a href="https://www.hhdayz.uk">Lewk</a>
+                </div>
+            </div>
+        </footer>
+
+        <script type="text/javascript">
+            var playerNameInput = document.getElementById('ipPort');
+            var playerNameInput = document.getElementById('playerName');
+            var button = document.getElementById('connect');
+            let address = window.location.hash;
+            let playerName = '';
+
+            var literals = {
+                en: {
+                    promptFirst: "Please enter your in game name:",
+                    promptSecondary: "Please confirm your in game name:",
+                    connect: "Connect to $$0$$",
+                    noAddress: "No ip or port provided"
+                }
+            };
+
+            let message = literals.en.promptFirst;
+
+            var storedPlayerName = localStorage.getItem('ign');
+
+            if (storedPlayerName) {
+                playerName = storedPlayerName;
+                message = literals.en.promptSecondary;
+            }
+
+            playerNameInput.value = playerName;
+
+            function buildConnect(){
+                if (address) {
+                    playerName = playerNameInput.value;
+                    var connect = 'steam://run/221100//+connect%20 ' + ipPort.value + ' %20-name=\"' + playerName + '\"';
+                    return connect;
+                }
+                return null;
+            }
+
+            function onIpPortChange(){
+                button.innerHTML = literals.en.connect.replace('$$0$$', ipPort.value);
+            }
+
+            function joinServer(){
+                playerName = playerNameInput.value;
+                window.open(buildConnect());
+                localStorage.setItem('ign', playerName);
+            }
+
+            ipPort.addEventListener('input', onIpPortChange);
+
+            if (address) {
+                address = address.replace('#/', '');
+                ipPort.value = address;
+                button.innerHTML = literals.en.connect.replace('$$0$$', address);
+                button.addEventListener('click', joinServer);
+            } else {
+                button.disabled = true;
+                button.innerHTML = literals.en.noAddress;
+            }
+        </script>
+    </body>
+</html>
