@@ -1,0 +1,195 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>DayZ Direct Connect</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        <style>
+            html, body { width: 100%;  height: 100%; }
+            body { display: flex; flex-direction: column; }
+            section.section { flex-grow: 1; }
+            header, footer { padding-bottom: 3rem !important }
+            .how-to { background: #f7f7f7; border-radius: 10px; padding: 1.5rem; font-size: 14px; }
+            .how-to ol { padding: 0 0.75rem; }
+            .hidden { display: none!important }
+            .radio { display: block; padding: 10px 0 }
+            .radio input { margin-right: 10px }
+            .radio + .radio { margin-left: 0; }
+        </style>
+    </head>
+    <body>
+        <section class="section">
+            <header class="container">
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1">DayZ Direct Connect</h1>
+                    </div>
+                </div>
+            </header>
+            <div class="container">
+                <div class="columns">
+                    <div class="column is-6 is-offset-1">
+                        <div class="field">
+                            <label class="label" for="ipPort">Select a server:</label>
+                            <div class="control" id="radioButtons">
+                                <input class="input" type="text" id="ipPort" />
+                            </div>
+                            <p class="help hidden"><a href="#" id="loadIpPort">Load IP and port from local storage.</a></p>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="playerName">Enter your name:</label>
+                            <div class="control">
+                                <input class="input" type="text" id="playerName" />
+                            </div>
+                            <p class="help"><a href="#" id="loadPlayerName">Load player name from local storage.</a></p>
+                        </div>
+                        <div class="field">
+                            <button class="button is-primary" id="connect">Connect</button>
+                        </div>
+                        <p><i>Make sure you have closed all DayZ related programmes (Steam, DZSA Launcher, DayZ, DayZ Tools)</i></p>
+                    </div>
+                    <div class="column is-4">
+                        <div class="how-to">
+                            <h2 class="title is-5">How to use DayZ Direct Connect</h2>
+                            <ol>
+                                <li>Close all Steam games. Make sure Steam does not show you as in-game.</li>
+                                <li>Make sure you have a IP and port to connect to.</li>
+                                <li>Make sure you have entered a player name.</li>
+                                <li>Press the connect button.</li>
+                                <li>When prompted with "Open Steam?" confirm by clicking "Open Steam".</li>
+                                <li>Go to Steam and click "Ok".</li>
+                                <li>Wait for DayZ to open, after aout 5-10 seconds you will get a pop up confirming the mods and connection details.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="container">
+                    <div class="columns">
+                    <div class="column is-offset-1">
+                        Idea/concept by <a href="https://www.middleagedgamers.co.uk">[MAG]inkihh</a><br>
+                        Made by <a href="https://www.hhdayz.uk">Lewk</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script type="text/javascript">
+            // Change these, add a new object for each server. Example:
+            // { address: '51.91.215.221:2302', name: 'Hero\'s Haven Chernarus HH1' }
+            var servers = [
+                { address: '51.91.215.221:2302', name: 'Hero\'s Haven Chernarus HH1' },
+                { address: '51.91.215.221:2502', name: 'Hero\'s Haven Chernarus Lite HH3' }
+            ];
+
+            var literals = {
+                en: {
+                    button: {
+                        connect: 'Connect to $$0$$',
+                        noAddress: 'No ip or port provided'
+                    }
+                }
+            };
+
+            let store_ipPort;
+            let store_playerName;
+            let element_ipPort = document.getElementById('ipPort');
+            let element_ipPortLocalStorage = document.getElementById('loadIpPort');
+            let element_playerName = document.getElementById('playerName');
+            let element_playerNameLocalStorage = document.getElementById('loadPlayerName');
+            let element_button = document.getElementById('connect');
+
+            function setFirstServerOnLoad() {
+                element_ipPort.setAttribute('value', servers[0].address);
+                store_ipPort = servers[0].address;
+            }
+
+            function radioButtonClick(e) {
+                if (e.target.attributes['data-address']) {
+                    element_ipPort.setAttribute('value', e.target.attributes['data-address'].value);
+                    store_ipPort = e.target.attributes['data-address'].value;
+                    shouldDisableButton();
+                }
+            }
+
+            function buildRadioButtons() {
+                var radioButtons = document.getElementById('radioButtons');
+                let buttons = radioButtons.innerHTML;
+                for (let i = 0; i < servers.length; i++) {
+                    let checked = '';
+                    if (i === 0) checked = 'checked';
+                    buttons += '<label class="radio" data-address="' + servers[i].address + '"><input type="radio" name="answer" ' + checked + '>' + servers[i].name + '</label>\n';
+                }
+                radioButtons.innerHTML = buttons;
+                for (let j = 0; j < radioButtons.children.length; j++) {
+                    if (radioButtons.children[j].attributes.class.value === 'radio') {
+                        radioButtons.children[j].addEventListener('click', radioButtonClick);
+                    }
+                }
+            }
+
+            function loadIpPortFromLocalStorage(e) {
+                if (e) e.preventDefault();
+                store_ipPort = localStorage.getItem('server');
+                element_ipPort.value = store_ipPort;
+            }
+
+            function loadPlayerNameFromLocalStorage(e) {
+                if (e) e.preventDefault();
+                store_playerName = localStorage.getItem('name');
+                element_playerName.value = store_playerName;
+            }
+
+            function findIpPortInHash() {
+                if (window.location.hash) {
+                    store_ipPort = window.location.hash.replace('#/', '');
+                    element_ipPort.value = store_ipPort;
+                }
+            }
+
+            function shouldDisableButton() {
+                if (
+                    store_ipPort &&
+                    store_ipPort !== '' &&
+                    store_playerName &&
+                    store_playerName !== ''
+                ) {
+                    element_button.disabled = false;
+                } else {
+                    element_button.disabled = true;
+                }
+            }
+
+            function onIpPortChange() {
+                store_ipPort = element_ipPort.value;
+                shouldDisableButton();
+            }
+
+            function onPlayerNameChange() {
+                store_playerName = element_playerName.value;
+                shouldDisableButton();
+            }
+
+            function buttonClick() {
+                localStorage.setItem('name', store_playerName);
+                localStorage.setItem('server', store_ipPort);
+                var connect = 'steam://run/221100//+connect%20' + store_ipPort + '%20-name=\"' + store_playerName + '\"';
+                window.open(connect);
+            }
+
+            element_ipPort.addEventListener('input', onIpPortChange);
+            element_playerName.addEventListener('input', onPlayerNameChange);
+            element_button.addEventListener('click', buttonClick);
+            element_ipPortLocalStorage.addEventListener('click', loadIpPortFromLocalStorage);
+            element_playerNameLocalStorage.addEventListener('click', loadPlayerNameFromLocalStorage);
+
+            buildRadioButtons();
+            loadPlayerNameFromLocalStorage();
+            setFirstServerOnLoad();
+
+            shouldDisableButton();
+        </script>
+    </body>
+</html>
